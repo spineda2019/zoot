@@ -15,6 +15,25 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    const boot_module = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+        .link_libc = false,
+        .link_libcpp = false,
+    });
+
+    boot_module.addCSourceFile(.{
+        .file = b.path("src/arch/x86/boot.S"),
+        .language = .assembly,
+    });
+
+    const boot_executable = b.addExecutable(.{
+        .name = "zoot_bin",
+        .root_module = boot_module,
+    });
+
+    b.installArtifact(boot_executable);
+
     // We will also create a module for our other entry point, 'main.zig'.
     const exe_mod = b.createModule(.{
         // `root_source_file` is the Zig "entry point" of the module. If a module
