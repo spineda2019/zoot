@@ -30,4 +30,6 @@ boot:
     cli
     jmp boot
 
+# it may be safe to use external zig code. This line will cause an odd
+# compilation error if the binary exceeds 512 bytes.
 .fill (510-(.-main)), 1, 0
